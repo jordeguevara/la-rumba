@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import { useAuth } from "@/components/providers";
@@ -19,13 +20,16 @@ interface AuthModalProps {
 
 export function AuthModal({ open, onOpenChange }: AuthModalProps) {
   const { user } = useAuth();
+  const [error, setError] = useState<string | null>(null);
 
   async function handleGoogleSignIn() {
+    setError(null);
     try {
       await signInWithPopup(auth, googleProvider);
       onOpenChange(false);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
+      setError(err instanceof Error ? err.message : "Sign-in failed");
     }
   }
 
@@ -78,6 +82,9 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
             Sign in to submit events, mark yourself as going, and connect with
             other dancers.
           </p>
+          {error && (
+            <p className="text-sm text-red-400 text-center">{error}</p>
+          )}
           <Button
             className="w-full gradient-pink border-0 text-white font-semibold h-12 rounded-xl"
             onClick={handleGoogleSignIn}
