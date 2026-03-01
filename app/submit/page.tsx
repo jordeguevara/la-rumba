@@ -9,6 +9,12 @@ import Link from "next/link";
 
 export default function SubmitPage() {
   const [prefill, setPrefill] = useState<ExtractedEvent | undefined>(undefined);
+  const [formKey, setFormKey] = useState(0);
+
+  function handleExtracted(data: ExtractedEvent) {
+    setPrefill(data);
+    setFormKey((k) => k + 1);
+  }
 
   return (
     <div className="min-h-screen pt-14 pb-12">
@@ -32,7 +38,7 @@ export default function SubmitPage() {
 
         {/* AI Extractor */}
         <div className="mb-6">
-          <ExtractForm onExtracted={setPrefill} />
+          <ExtractForm onExtracted={handleExtracted} />
         </div>
 
         {prefill && (
@@ -55,7 +61,7 @@ export default function SubmitPage() {
         </div>
 
         {/* Form */}
-        <SubmitForm prefill={prefill} />
+        <SubmitForm key={formKey} prefill={prefill} />
       </div>
     </div>
   );
